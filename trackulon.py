@@ -1,5 +1,7 @@
 #!/usr/bin/env python2.7
 
+debug = False
+
 import csv
 import sqlite3
 import urllib
@@ -42,7 +44,8 @@ c.execute('''create table if not exists etas (tmst text, staId integer,
 # TODO: work in tmst
 
 for reqURL in reqURLs:
-    print(reqURL)
+    if debug:
+        print(reqURL)
 
     r = opener.open(reqURL)
 
@@ -53,7 +56,8 @@ for reqURL in reqURLs:
         values = []
         for elem in eta.iter():
             if (elem.tag != 'eta'):
-                print(elem.tag, elem.text)
+                if debug:
+                    print(elem.tag, elem.text)
                 tags.append(elem.tag)
                 values.append(elem.text)
 
