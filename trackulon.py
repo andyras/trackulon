@@ -1,6 +1,6 @@
 #!/usr/bin/env python2.7
 
-debug = False
+debug = True
 
 import csv
 import sqlite3
@@ -41,7 +41,15 @@ c.execute('''create table if not exists etas (tmst text, staId integer,
                isApp integer, isSch integer, isFlt integer, isDly integer,
                flags blob, lat real, lon real, heading integer)''')
 
+tags = ['tmst', 'staId', 'stpId', 'staNm', 'stpDe', 'rn', 'rt', 'destSt',
+'destNm', 'trDr', 'prdt', 'arrT', 'isApp', 'isSch', 'isFlt', 'isDly', 'flags',
+'lat', 'lon', 'heading']
+
 # TODO: work in tmst
+
+sqlStr = 'insert into etas values (?' + ',?'*(len(tags) - 1) + ')'
+
+etas = [] # list of eta tuples
 
 for reqURL in reqURLs:
     if debug:
@@ -52,17 +60,16 @@ for reqURL in reqURLs:
     e = ET.parse(r)
     root = e.getroot()
     for eta in root.iter('eta'):
-        tags = []
-        values = []
+        values = [""] # first value is placeholder for tmst
         for elem in eta.iter():
             if (elem.tag != 'eta'):
                 if debug:
                     print(elem.tag, elem.text)
-                tags.append(elem.tag)
                 values.append(elem.text)
+        etas.append(tuple(values))
 
-        sqlStr = 'insert into etas (' + ','.join(tags) + ') values (?' + ',?'*(len(values) - 1) + ')'
-        c.execute(sqlStr, (values))
+
+c.executemany(sqlStr, etas)
         # if eta.find('isSch').text != "1":
         #     print ",".join([eta.find('rt').text,
         #                    eta.find('rn').text,

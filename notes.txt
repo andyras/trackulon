@@ -1,0 +1,10 @@
+Things to do (in rough order)
+- make list of stops to systematically poll
+  - how many requests for a full snapshot?
+- systematically poll all stations
+  - launch subprocesses?
+- find way to store each response
+  - pandas db?
+  - check for errors in request
+- errors
+  - create error dict or something based on API codes
